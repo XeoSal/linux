@@ -69,18 +69,11 @@ struct snd_soc_dai_driver pcm5102_dai = {
 	.id = 1,
 	.playback = {
 		     .stream_name = "HIFI Playback",
-		     .channels_min = 1,
-		     .channels_max = 8,
+		     .channels_min = 2,
+		     .channels_max = 2,
 		     .rates = PCM5102_RATES,
 		     .formats = PCM5102_FORMATS,
 		     },
-	.capture = {
-		    .stream_name = "HIFI Capture",
-		    .channels_min = 1,
-		    .channels_max = 2,
-		    .rates = PCM5102_RATES,
-		    .formats = PCM5102_FORMATS,
-		    },
 	.ops = &pcm5102_ops,
 };
 

@@ -111,6 +111,12 @@ int efuse_getinfo(char *item, struct efusekey_info *info)
 			break;
 		}
 	}
+
+#if defined(CONFIG_ARCH_MESON64_ODROIDC2)
+	if (!strncmp(item, "usid", 4))
+		info->offset = 20;
+#endif
+
 	if (ret < 0)
 		pr_err("%s item not found.\n", item);
 	return ret;
@@ -488,7 +494,7 @@ static struct class_attribute efuse_class_attrs[] = {
 
 	__ATTR(mac_wifi, S_IRWXU, show_mac_wifi, store_mac_wifi),
 
-	__ATTR(usid, S_IRWXU, show_usid, store_usid),
+	__ATTR(usid, (S_IRWXU | S_IRGRP | S_IROTH), show_usid, store_usid),
 
 	__ATTR_NULL
 

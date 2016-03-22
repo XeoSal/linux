@@ -323,4 +323,4 @@ static int __init meson_cpufreq_parent_init(void)
 	return platform_driver_probe(&meson_cpufreq_parent_driver,
 							meson_cpufreq_probe);
 }
-late_initcall(meson_cpufreq_parent_init);
+device_initcall(meson_cpufreq_parent_init);

@@ -73,6 +73,37 @@ static const char *product;
 static const char *serialno;
 static const char *mac_addr;
 
+#define	REV_GPIOY_0	211	/* GPIO Number (GPIOY.0) */
+#define	REV_GPIOY_1	212	/* GPIO Number (GPIOY.1) */
+
+static ssize_t show_boardrev(struct class *class,
+		struct class_attribute *attr, char *buf)
+{
+	int	rev;
+
+	if (gpio_request_one(REV_GPIOY_0, GPIOF_IN, "rev")) {
+		pr_err("%s : REV_GPIOY_0 request error!\n", __func__);
+		return	0;
+	}
+	gpio_set_pullup(REV_GPIOY_0, 1);
+
+	rev = gpio_get_value(REV_GPIOY_0) ? 0x01 : 0x00;
+
+	gpio_free(REV_GPIOY_0);
+
+	if (gpio_request_one(REV_GPIOY_1, GPIOF_IN, "rev")) {
+		pr_err("%s : REV_GPIOY_1 request error!\n", __func__);
+		return	0;
+	}
+	gpio_set_pullup(REV_GPIOY_1, 1);
+
+	rev |= gpio_get_value(REV_GPIOY_1) ? 0x02 : 0x00;
+
+	gpio_free(REV_GPIOY_1);
+
+	return snprintf(buf, PAGE_SIZE, "%d\n", rev);
+}
+
 static ssize_t show_product(struct class *class,
 		struct class_attribute *attr, char *buf)
 {
@@ -145,6 +176,7 @@ static struct class_attribute odroid_class_attrs[] = {
 	__ATTR(serialno, 0444, show_serialno, NULL),
 	__ATTR(mac_addr, 0444, show_mac_addr, NULL),
 	__ATTR(bootdev, 0444, show_bootdev, NULL),
+	__ATTR(boardrev, 0444, show_boardrev, NULL),
 	__ATTR_NULL,
 };
 

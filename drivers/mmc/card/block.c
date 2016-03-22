@@ -43,6 +43,8 @@
 #include <linux/mmc/sd.h>
 
 #include <asm/uaccess.h>
+#include <mtd/mtd-abi.h>
+#include <linux/amlogic/sd.h>
 
 #include "queue.h"
 #if !defined(CONFIG_ARCH_MESON64_ODROIDC2)
@@ -623,9 +625,39 @@ cmd_err:
 static int mmc_blk_ioctl(struct block_device *bdev, fmode_t mode,
 	unsigned int cmd, unsigned long arg)
 {
+	void __user *argp = (void __user *)arg;
 	int ret = -EINVAL;
-	if (cmd == MMC_IOC_CMD)
+	struct mtd_info_user info;
+	struct gendisk *disk = bdev->bd_disk;
+	int part_num;
+
+	switch (cmd) {
+	case MMC_IOC_CMD:
 		ret = mmc_blk_ioctl_cmd(bdev, (struct mmc_ioc_cmd __user *)arg);
+		break;
+	case MEMGETINFO:
+		part_num = MINOR(bdev->bd_dev)-disk->first_minor;
+		BUG_ON(part_num < 0);
+		memset(&info, 0, sizeof(info));
+		info.type       = MTD_NORFLASH;
+		info.flags      = MTD_CAP_NORFLASH;
+		info.size       = (disk->part_tbl->part[part_num]->nr_sects<<9);
+		info.erasesize  = SDIO_BOUNCE_REQ_SIZE;
+		info.writesize  = SDIO_BOUNCE_REQ_SIZE;
+		info.oobsize    = 4096;
+		if (copy_to_user(argp, &info, sizeof(struct mtd_info_user)))
+			return -EFAULT;
+		ret = 0;
+		break;
+	case MEMERASE:
+	case MEMLOCK:
+	case MEMUNLOCK:
+	case MEMGETBADBLOCK:
+		return 0;
+	default:
+		ret = -EINVAL;
+	}
+
 	return ret;
 }
 

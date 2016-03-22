@@ -260,8 +260,6 @@ static const struct of_device_id odroid_dac_of_match[] = {
 	{},
 };
 
-MODULE_DEVICE_TABLE(of, amlogic_audio_dt_match);
-
 static struct platform_driver odroid_dac_audio_driver = {
 	.driver = {
 		   .name = DRV_NAME,
@@ -271,7 +269,22 @@ static struct platform_driver odroid_dac_audio_driver = {
 	.probe = odroid_dac_probe,
 };
 
-module_platform_driver(odroid_dac_audio_driver);
+static int __init odroid_audio_init(void)
+{
+	return platform_driver_register(&odroid_dac_audio_driver);
+}
+
+static void __exit odroid_audio_exit(void)
+{
+	platform_driver_unregister(&odroid_dac_audio_driver);
+}
+
+#ifdef CONFIG_DEFERRED_MODULE_INIT
+deferred_module_init(odroid_audio_init);
+#else
+module_init(odroid_audio_init);
+#endif
+module_exit(odroid_audio_exit);
 
 MODULE_AUTHOR("Hardkernel, Inc.");
 MODULE_DESCRIPTION("ODROID audio machine Asoc driver");

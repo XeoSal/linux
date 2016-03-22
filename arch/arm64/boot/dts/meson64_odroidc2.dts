@@ -715,6 +715,46 @@
                         linux,default-trigger = "heartbeat";
                 };
         };
+
+	onewire: onewire {
+		compatible = "w1-gpio";
+		gpios = <&gpio GPIOX_21 0>;
+	};
+
+	pwm{
+		compatible = "amlogic, odroid-pwm";
+		dev_name = "meson_pwm";
+		status = "ok";
+		pinctrl-names = "odroid_pwm0","odroid_pwm1";
+		pinctrl-0 = <&odroid_pwm0>;
+		pinctrl-1 = <&odroid_pwm1>;
+	};
+
+	pwm-ctrl {
+		compatible = "amlogic, pwm-ctrl";
+		dev_name = "pwm-ctrl";
+		status = "ok";
+	};
+
+	spi-gpio {
+		compatible = "spi-gpio";
+		status = "ok";
+		id = <0>;
+
+		gpio-sck  = <&gpio GPIOX_2 0>;
+		gpio-miso = <&gpio GPIOX_4 0>;
+		gpio-mosi = <&gpio GPIOX_7 0>;
+		cs-gpios  = <&gpio GPIOX_1 0
+			     &gpio GPIOY_14 0>;
+		num-chipselects = <2>;
+
+		/* clients */
+		spidev0: spi-gpio@0 {
+			compatible = "spidev";
+			reg = <0>;
+			spi-max-frequency = <500000>;
+		};
+	};
 };
 
 &i2c_a {
@@ -746,12 +786,21 @@
                 amlogic,clrmask = <AO 0x80000018>;
                 amlogic,pins = "GPIOAO_13";
         };
+
+	odroid_pwm0: odroid_pwm0 {
+		amlogic,setmask=<3 0x00020000>;
+		amlogic,clrmask=<3 0x00000200>;
+		amlogic,pins="GPIOX_6";
+	};
+	odroid_pwm1: odroid_pwm1 {
+		amlogic,setmask=<3 0x00020000
+		                 3 0x00060000>;
+		amlogic,clrmask=<3 0x00000300
+		                 8 0x00000800>;
+		amlogic,pins="GPIOX_6","GPIOX_7";
+	};
 };
 
 &efuse {
-	status = "okay";
-};
-
-&audio_data {
 	status = "okay";
 };
