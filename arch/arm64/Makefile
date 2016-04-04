@@ -54,7 +54,7 @@ libs-y		+= $(LIBGCC)
 ifeq ($(CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE),y)
 KBUILD_IMAGE	:= Image.gz-dtb
 else
-KBUILD_IMAGE	:= Image.gz Image.lzo
+KBUILD_IMAGE	:= Image.gz
 endif
 
 KBUILD_DTBS	:= dtbs
@@ -63,14 +63,14 @@ all:	$(KBUILD_IMAGE) $(KBUILD_DTBS)
 
 boot := arch/arm64/boot
 
-Image Image.gz Image.lzo: vmlinux
+Image Image.gz: vmlinux
 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
 
 zinstall install: vmlinux
 	$(Q)$(MAKE) $(build)=$(boot) $@
 
 %.dtb: scripts
-	$(Q)$(MAKE) $(build)=$(boot)/dts/amlogic $(boot)/dts/amlogic/$@
+	$(Q)$(MAKE) $(build)=$(boot)/dts $(boot)/dts/$@
 
 dtbs: scripts
 	$(Q)$(MAKE) $(build)=$(boot)/dts dtbs
