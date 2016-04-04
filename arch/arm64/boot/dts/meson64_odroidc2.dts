@@ -709,7 +709,7 @@
 		pinctrl-0 = <&led_pins>;
 
                 /* Blue LED */
-                hearbeat {
+                heartbeat {
                         label = "blue:heartbeat";
                         gpios = <&gpio_ao GPIOAO_13 GPIO_ACTIVE_LOW>;
                         linux,default-trigger = "heartbeat";
@@ -738,9 +738,10 @@
 
 	spi-gpio {
 		compatible = "spi-gpio";
+		#address-cells = <1>;
+		#size-cells = <0>;
 		status = "ok";
 		id = <0>;
-
 		gpio-sck  = <&gpio GPIOX_2 0>;
 		gpio-miso = <&gpio GPIOX_4 0>;
 		gpio-mosi = <&gpio GPIOX_7 0>;
