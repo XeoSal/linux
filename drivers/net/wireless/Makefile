@@ -61,3 +61,5 @@ obj-$(CONFIG_BRCMSMAC)	+= brcm80211/
 obj-$(CONFIG_CW1200)	+= cw1200/
 
 obj-$(CONFIG_RTL8821AU) += rtl8812au/
+
+obj-$(CONFIG_RTL8192CU) += rtl8192cu/

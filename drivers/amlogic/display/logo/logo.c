@@ -195,8 +195,11 @@ static int refresh_mode_and_logo(bool first)
 {
 	enum vmode_e cur_mode = VMODE_MAX;
 	int cnt = sizeof(mode_infos) / sizeof(mode_infos[0]);
+#if defined(CONFIG_ARCH_MESON64_ODROIDC2)
+	int hdp_state = 1;
+#else
 	int hdp_state = get_hpd_state();
-
+#endif
 	if (!first && osd_get_logo_index() != logo_info.index)
 		return -1;
 

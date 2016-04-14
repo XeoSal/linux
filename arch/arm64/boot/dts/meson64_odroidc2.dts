@@ -635,7 +635,7 @@
 		#thermal-sensor-cells = <1>;
 		cpu_dyn_coeff = <140>;
 		/* cpu_freq gpu_freq cpu_core gpu_core */
-		min_state = <1000000 400 1 2>;
+		min_state = <500000 400 1 2>;
 		gpu_dyn_coeff = <437>;
 	};
 	cpucore:thermal_cpu_cores {
@@ -650,33 +650,39 @@
 			thermal-sensors = <&aml_sensor0 3>;
 
 			trips {
-				switch_on: trip-point@0 {
-					temperature = <70000>;
+				warm: trip-point@0 {
+					temperature = <90000>;
 					hysteresis = <1000>;
 					type = "passive";
 				};
 				control: trip-point@1 {
-					temperature = <80000>;
+					temperature = <100000>;
 					hysteresis = <1000>;
 					type = "passive";
 				};
 				hot: trip-point@2 {
-					temperature = <90000>;
-					hysteresis = <5000>;
-					type = "hot";
+					temperature = <110000>;
+					hysteresis = <1000>;
+					type = "passive";
 				};
 				critical: trip-point@3 {
-					temperature = <110000>;
+					temperature = <115000>;
 					hysteresis = <1000>;
 					type = "critical";
 				};
 			};
  			cooling-maps {
-				cpufreq_cooling_map {
+				cpufreq_cooling_map0 {
 					trip = <&control>;
-					cooling-device = <&cpus 0 4>;
-					contribution = <1024>;
+					cooling-device = <&cpus 0 2>;
+					contribution = <100>;
 				};
+				cpufreq_cooling_map1 {
+					trip = <&hot>;
+					cooling-device = <&cpus 3 5>;
+					contribution = <100>;
+				};
+
 				cpucore_cooling_map {
 					trip = <&control>;
 					cooling-device = <&cpucore 0 3>;
