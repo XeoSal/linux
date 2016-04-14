@@ -641,8 +641,7 @@ static int aml_i2s_copy_playback(struct snd_pcm_runtime *runtime, int channel,
 				*left = (*tfrom++);
 				*right = (*tfrom++);
 			}
-		} else if (runtime->format == SNDRV_PCM_FORMAT_S24_LE
-			   && I2S_MODE == AIU_I2S_MODE_PCM24) {
+		} else if (runtime->format == SNDRV_PCM_FORMAT_S24_LE) {
 			int32_t *tfrom, *to, *left, *right;
 			tfrom = (int32_t *) ubuf;
 

@@ -64,6 +64,7 @@ static int i2s_pos_sync;
 /* extern int set_i2s_iec958_samesource(int enable); */
 #define DEFAULT_SAMPLERATE 48000
 #define DEFAULT_MCLK_RATIO_SR 256
+#define MCLK_RATIO_128FS_SR 128
 static int i2sbuf[32 + 16];
 static void aml_i2s_play(void)
 {
@@ -163,7 +164,7 @@ static int aml_i2s_set_amclk(struct aml_i2s *i2s, unsigned long rate)
 		return ret;
 	}
 
-	audio_set_i2s_clk_div();
+	audio_set_i2s_clk_div(i2s->old_samplerate);
 
 	return 0;
 }
@@ -288,7 +289,10 @@ static int aml_dai_i2s_hw_params(struct snd_pcm_substream *substream,
 	srate = params_rate(params);
 	if (i2s->old_samplerate != srate) {
 		i2s->old_samplerate = srate;
-		mclk_rate = srate * DEFAULT_MCLK_RATIO_SR;
+		if (srate > 192000)
+			mclk_rate = srate * MCLK_RATIO_128FS_SR;
+		else
+			mclk_rate = srate * DEFAULT_MCLK_RATIO_SR;
 		aml_i2s_set_amclk(i2s, mclk_rate);
 	}
 
@@ -339,7 +343,7 @@ static int aml_dai_i2s_resume(struct snd_soc_dai *dai)
 #define aml_dai_i2s_resume	NULL
 #endif				/* CONFIG_PM */
 
-#define AML_DAI_I2S_RATES		(SNDRV_PCM_RATE_8000_192000)
+#define AML_DAI_I2S_RATES		(SNDRV_PCM_RATE_8000_384000)
 #define AML_DAI_I2S_FORMATS		(SNDRV_PCM_FMTBIT_S16_LE |\
 		SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
 

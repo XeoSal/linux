@@ -722,14 +722,22 @@ int hdmitx_set_display(struct hdmitx_dev *hdmitx_device,
 			 * TMDS_MODE[hdmi_config]
 			 * 0: DVI Mode	   1: HDMI Mode
 			 */
-			if (is_dvi_device(&hdmitx_device->RXCap)) {
+			if (odroidc_voutmode()) {
 				hdmi_print(1, "Sink is DVI device\n");
 				hdmitx_device->HWOp.CntlConfig(hdmitx_device,
 					CONF_HDMI_DVI_MODE, DVI_MODE);
 			} else {
-				hdmi_print(1, "Sink is HDMI device\n");
-				hdmitx_device->HWOp.CntlConfig(hdmitx_device,
-					CONF_HDMI_DVI_MODE, HDMI_MODE);
+				if (is_dvi_device(&hdmitx_device->RXCap)) {
+					hdmi_print(1, "Sink is DVI device\n");
+					hdmitx_device->HWOp.CntlConfig(
+						hdmitx_device,
+						CONF_HDMI_DVI_MODE, DVI_MODE);
+				} else {
+					hdmi_print(1, "Sink is HDMI device\n");
+					hdmitx_device->HWOp.CntlConfig(
+						hdmitx_device,
+						CONF_HDMI_DVI_MODE, HDMI_MODE);
+				}
 			}
 			/*check system status by reading EDID_STATUS*/
 			switch (hdmitx_device->HWOp.CntlConfig(
