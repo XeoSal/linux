@@ -1104,20 +1104,29 @@ if (get_meson_cpu_version(MESON_CPU_VERSION_LVL_MAJOR)
 	if (ret)
 		dev_err(&pdev->dev, " class register i2c_class fail!\n");
 
+	platform_set_drvdata(pdev, i2c);
+
 	return 0;
 }
 
 static int aml_i2c_remove(struct platform_device *pdev)
 {
 	struct aml_i2c *i2c = platform_get_drvdata(pdev);
+
+	if (i2c == NULL) {
+		dev_err(&pdev->dev, "aml_i2c is NULL!\n");
+		goto out;
+	}
 	if (i2c->mode == I2C_INTERRUPT_MODE)
 		free_irq(i2c->irq, i2c);
 	if (i2c->mode == I2C_TIMER_POLLING_MODE)
 		hrtimer_cancel(&i2c->aml_i2c_hrtimer);
 	mutex_destroy(i2c->lock);
 	i2c_del_adapter(&i2c->adap);
+	class_unregister(&i2c->cls);
 	kzfree(i2c);
 	i2c = NULL;
+out:
 	return 0;
 }
 
