@@ -52,6 +52,8 @@ static ssize_t domain_stat_read(struct class *class,
 #define MAX_TOKEN 20
 #define FULL_UTILIZATION 256
 
+extern int utilization_level;
+
 static ssize_t mpgpu_write(struct class *class,
 		struct class_attribute *attr, const char *buf, size_t count)
 {
@@ -137,6 +139,11 @@ static ssize_t scale_mode_write(struct class *class,
 	set_mali_schel_mode(val);
 
 	return count;
+}
+
+static ssize_t utilization(struct class *class, struct class_attribute *attr, char *buf) 
+{
+	return sprintf(buf, "%d\n", utilization_level * 100 / 255);
 }
 
 static ssize_t max_pp_read(struct class *class,
@@ -315,6 +322,7 @@ static struct class_attribute mali_class_attrs[] = {
 	__ATTR(max_pp,		0644, max_pp_read,	max_pp_write),
 	__ATTR(cur_freq,	0644, freq_read,	freq_write),
 	__ATTR(cur_pp,		0644, current_pp_read,	current_pp_write),
+	__ATTR(utilization, 0644, utilization, NULL),
 };
 
 static struct class mpgpu_class = {

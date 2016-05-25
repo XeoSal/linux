@@ -2071,6 +2071,19 @@ static   void  osd1_update_color_mode(void)
 		VSYNCOSD_WR_MPEG_REG(VIU_OSD1_BLK2_CFG_W0, data32);
 		VSYNCOSD_WR_MPEG_REG(VIU_OSD1_BLK3_CFG_W0, data32);
 	}
+		if (get_cpu_type() >= MESON_CPU_MAJOR_ID_GXBB) {
+			enum color_index_e idx =
+				osd_hw.color_info[OSD1]->color_index;
+			if (idx >= COLOR_INDEX_32_BGRX
+			    && idx <= COLOR_INDEX_32_XRGB)
+				VSYNCOSD_WR_MPEG_REG_BITS(
+					VIU_OSD1_CTRL_STAT2,
+					0x1ff, 6, 9);
+			else
+				VSYNCOSD_WR_MPEG_REG_BITS(
+					VIU_OSD1_CTRL_STAT2,
+					0, 6, 9);
+		}
 	remove_from_update_list(OSD1, OSD_COLOR_MODE);
 }
 static void osd2_update_color_mode(void)
@@ -2090,6 +2103,19 @@ static void osd2_update_color_mode(void)
 		/* osd_blk_mode */
 		data32 |=  osd_hw.color_info[OSD2]->hw_blkmode << 8;
 		VSYNCOSD_WR_MPEG_REG(VIU_OSD2_BLK0_CFG_W0, data32);
+		if (get_cpu_type() >= MESON_CPU_MAJOR_ID_GXBB) {
+			enum color_index_e idx =
+				osd_hw.color_info[OSD2]->color_index;
+			if (idx >= COLOR_INDEX_32_BGRX
+			    && idx <= COLOR_INDEX_32_XRGB)
+				VSYNCOSD_WR_MPEG_REG_BITS(
+					VIU_OSD2_CTRL_STAT2,
+					0x1ff, 6, 9);
+			else
+				VSYNCOSD_WR_MPEG_REG_BITS(
+					VIU_OSD2_CTRL_STAT2,
+					0, 6, 9);
+		}
 	}
 	remove_from_update_list(OSD2, OSD_COLOR_MODE);
 }
